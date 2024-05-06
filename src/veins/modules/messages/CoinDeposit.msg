@@ -19,6 +19,7 @@ import veins.modules.messages.BaseFrame1609_4;
 // TODO generated message class
 //
 packet CoinDeposit extends veins::BaseFrame1609_4 {
+    int vid;
     string cert;
     string ZZs[9];
     string cl_proof;

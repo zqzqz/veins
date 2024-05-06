@@ -18,6 +18,7 @@
 
 #include "veins/modules/application/ieee80211p/DemoBaseApplLayer.h"
 #include "common.h"
+#include "CpuModel.h"
 
 using namespace omnetpp;
 
@@ -31,7 +32,9 @@ protected:
     CoinDepositStage coinDepositStage;
     Coord rsuPosition;
     LAddress::L2Type rsuAddress;
+    CpuModel cpuModel;
 protected:
+    void handleSelfMsg(cMessage* msg) override;
     void handlePositionUpdate(cObject* obj) override;
     void onWSM(BaseFrame1609_4* wsm) override;
 };

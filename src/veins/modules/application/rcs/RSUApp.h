@@ -18,6 +18,7 @@
 
 #include "veins/modules/application/ieee80211p/DemoBaseApplLayer.h"
 #include "common.h"
+#include "CpuModel.h"
 #include <map>
 
 using namespace omnetpp;
@@ -28,10 +29,11 @@ class RSUApp : public DemoBaseApplLayer {
 public:
     void initialize(int stage) override;
 protected:
-    double cpuLoad;
+    CpuModel cpuModel;
     std::map<int, CoinAssignmentStage> coinAssignmentStages;
     std::map<int, CoinDepositStage> coinDepositStages;
 protected:
+    void handleSelfMsg(cMessage* msg) override;
     void onWSM(BaseFrame1609_4* wsm) override;
 };
 

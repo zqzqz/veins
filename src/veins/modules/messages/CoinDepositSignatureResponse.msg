@@ -19,6 +19,7 @@ import veins.modules.messages.BaseFrame1609_4;
 // TODO generated message class
 //
 packet CoinDepositSignatureResponse extends veins::BaseFrame1609_4 {
+    int vid;
     string signature;
     long timestamp;
 }
