@@ -56,7 +56,6 @@ void CarApp::handlePositionUpdate(cObject* obj) {
                     cpuModel.getLatency(simTime().dbl(), COIN_REQUEST_LATENCY_MEAN, COIN_REQUEST_LATENCY_STDDEV));
             coinAssignmentStage = CoinAssignmentStage::REQUESTED;
             EV << "[Vehicle " << myId << "]: I sent a message of CoinRequest" << endl;
-            coinAssignmentStage = CoinAssignmentStage::REQUESTED;
         }
         if (coinDepositStage == CoinDepositStage::INIT) {
             CoinDeposit* msg = new CoinDeposit();
