@@ -33,6 +33,8 @@ protected:
     Coord rsuPosition;
     LAddress::L2Type rsuAddress;
     CpuModel cpuModel;
+    double coinAssignmentLastTry;
+    double coinDepositLastTry;
 protected:
     void handleSelfMsg(cMessage* msg) override;
     void handlePositionUpdate(cObject* obj) override;

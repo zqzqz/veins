@@ -16,11 +16,19 @@ public:
     int numCores;
     std::vector<double> coreLoads;
 
+    class Latency {
+    public:
+        double all;
+        double queue_time;
+        double computation_time;
+    };
+
     CpuModel();
     CpuModel(int numCores);
     void init(int numCores);
     double randomGaussian(double mean, double std);
     double getLatency(double currentTime, double mean, double std);
+    Latency getLatencyInfo(double currentTime, double mean, double std);
 };
 
 

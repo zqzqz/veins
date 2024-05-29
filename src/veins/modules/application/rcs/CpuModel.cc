@@ -43,4 +43,22 @@ double CpuModel::getLatency(double currentTime, double mean, double std) {
     return coreLoads[selectCoreId] - currentTime;
 }
 
+CpuModel::Latency CpuModel::getLatencyInfo(double currentTime, double mean, double std) {
+    int selectCoreId = -1;
+    double earliestTime = 1000000.0;
+    for (int i = 0; i < coreLoads.size(); i++) {
+        if (coreLoads[i] < currentTime) coreLoads[i] = currentTime;
+        if (coreLoads[i] < earliestTime) {
+            earliestTime = coreLoads[i];
+            selectCoreId = i;
+        }
+    }
+    CpuModel::Latency L;
+    L.queue_time = coreLoads[selectCoreId] - currentTime;
+    L.computation_time = fmax(0, randomGaussian(mean, std));
+    coreLoads[selectCoreId] = coreLoads[selectCoreId] + L.computation_time;
+    L.all = L.queue_time + L.computation_time;
+    return L;
+}
+
 

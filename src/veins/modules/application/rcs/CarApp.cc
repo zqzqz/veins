@@ -46,33 +46,51 @@ void CarApp::handlePositionUpdate(cObject* obj) {
     curPosition = mobility->getPositionAt(simTime());
     double distanceToRSU = sqrt(pow(curPosition.x - rsuPosition.x, 2) + pow(curPosition.y - rsuPosition.y, 2));
 
-    if (distanceToRSU < 100) {
+    if (coinAssignmentStage != CoinAssignmentStage::INIT && coinAssignmentStage != CoinAssignmentStage::FINISHED && coinAssignmentStage != CoinAssignmentStage::FAILED) {
+        if (simTime().dbl() > coinAssignmentLastTry + 5) {
+            coinAssignmentStage= CoinAssignmentStage::INIT;
+        }
+    }
+    if (coinDepositStage != CoinDepositStage::INIT && coinDepositStage != CoinDepositStage::SIGNATURE_SENT && coinDepositStage != CoinDepositStage::FAILED) {
+        if (simTime().dbl() > coinDepositLastTry + 5) {
+            coinDepositStage= CoinDepositStage::INIT;
+        }
+    }
+
+    if (distanceToRSU < 150) {
         if (coinAssignmentStage == CoinAssignmentStage::INIT) {
+            coinAssignmentLastTry = simTime().dbl();
             CoinRequest* msg = new CoinRequest();
             populateWSM(msg, rsuAddress);
             msg->setVid(myId);
             msg->setByteLength(COIN_REQUEST_BYTE_SIZE);
-            sendDelayedDown(msg->dup(),
-                    cpuModel.getLatency(simTime().dbl(), COIN_REQUEST_LATENCY_MEAN, COIN_REQUEST_LATENCY_STDDEV));
+            CpuModel::Latency latencyInfo = cpuModel.getLatencyInfo(simTime().dbl(), COIN_REQUEST_LATENCY_MEAN, COIN_REQUEST_LATENCY_STDDEV);
+            sendDelayedDown(msg->dup(), latencyInfo.all);
             coinAssignmentStage = CoinAssignmentStage::REQUESTED;
-            EV << "[Vehicle " << myId << "]: I sent a message of CoinRequest" << endl;
+            EV << "[Vehicle " << myId << "]: I sent a message of CoinRequest"
+                    << ". Queue time " << latencyInfo.queue_time << " Computation time " << latencyInfo.computation_time << endl;
         }
         if (coinDepositStage == CoinDepositStage::INIT) {
+            coinDepositLastTry = simTime().dbl();
             CoinDeposit* msg = new CoinDeposit();
             populateWSM(msg, rsuAddress);
             msg->setVid(myId);
             msg->setByteLength(COIN_DEPOSIT_BYTE_SIZE);
-            sendDelayedDown(msg->dup(),
-                    cpuModel.getLatency(simTime().dbl(), COIN_DEPOSIT_LATENCY_MEAN, COIN_DEPOSIT_LATENCY_STDDEV));
+            CpuModel::Latency latencyInfo = cpuModel.getLatencyInfo(simTime().dbl(), COIN_DEPOSIT_LATENCY_MEAN, COIN_DEPOSIT_LATENCY_STDDEV);
+            sendDelayedDown(msg->dup(), latencyInfo.all);
             coinDepositStage = CoinDepositStage::REQUESTED;
-            EV << "[Vehicle " << myId << "]: I sent a message of CoinDeposit" << endl;
+            EV << "[Vehicle " << myId << "]: I sent a message of CoinDeposit"
+                    << ". Queue time " << latencyInfo.queue_time << " Computation time " << latencyInfo.computation_time << endl;
         }
-    } else {
-        if (coinAssignmentStage != CoinAssignmentStage::INIT && coinAssignmentStage != CoinAssignmentStage::FINISHED) {
+    }
+    if (distanceToRSU > 150) {
+        if (coinAssignmentStage != CoinAssignmentStage::INIT && coinAssignmentStage != CoinAssignmentStage::FINISHED && coinAssignmentStage != CoinAssignmentStage::FAILED) {
             coinAssignmentStage = CoinAssignmentStage::FAILED;
+            EV << "[Vehicle " << myId << "]: Coin assignment failed." << endl;
         }
-        if (coinDepositStage != CoinDepositStage::INIT && coinDepositStage != CoinDepositStage::SIGNATURE_SENT) {
+        if (coinDepositStage != CoinDepositStage::INIT && coinDepositStage != CoinDepositStage::SIGNATURE_SENT && coinDepositStage != CoinDepositStage::FAILED) {
             coinDepositStage = CoinDepositStage::FAILED;
+            EV << "[Vehicle " << myId << "]: Coin deposit failed." << endl;
         }
     }
 }
@@ -88,9 +106,10 @@ void CarApp::onWSM(BaseFrame1609_4* wsm) {
         populateWSM(msg, rsuAddress);
         msg->setVid(myId);
         msg->setByteLength(COIN_DEPOSIT_SIGNATURE_RESPONSE_BYTE_SIZE);
-        sendDelayedDown(msg->dup(),
-                cpuModel.getLatency(simTime().dbl(), COIN_DEPOSIT_SIGNATURE_RESPONSE_LATENCY_MEAN, COIN_DEPOSIT_SIGNATURE_RESPONSE_LATENCY_STDDEV));
+        CpuModel::Latency latencyInfo = cpuModel.getLatencyInfo(simTime().dbl(), COIN_DEPOSIT_SIGNATURE_RESPONSE_LATENCY_MEAN, COIN_DEPOSIT_SIGNATURE_RESPONSE_LATENCY_STDDEV);
+        sendDelayedDown(msg->dup(), latencyInfo.all);
         coinDepositStage = CoinDepositStage::SIGNATURE_SENT;
-        EV << "[Vehicle " << myId << "]: I sent a message of CoinDepositSignatureResponse" << endl;
+        EV << "[Vehicle " << myId << "]: I sent a message of CoinDepositSignatureResponse"
+                << ". Queue time " << latencyInfo.queue_time << " Computation time " << latencyInfo.computation_time << endl;
     }
 }

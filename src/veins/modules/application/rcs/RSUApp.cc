@@ -29,7 +29,7 @@ Define_Module(veins::RSUApp);
 
 void RSUApp::initialize(int stage) {
     DemoBaseApplLayer::initialize(stage);
-    cpuModel.init(1);
+    cpuModel.init(3);
     EV << "[RSU] address " << myId << endl;
 }
 
@@ -42,15 +42,16 @@ void RSUApp::onWSM(BaseFrame1609_4* wsm) {
     if (CoinRequest* req = dynamic_cast<CoinRequest*>(wsm)) {
         EV << "[RSU] I received a message of CoinRequest from " << req->getVid() << endl;
         int vid = req->getVid();
-        if (coinDepositStages.find(vid) == coinDepositStages.end()) {
+        if (coinAssignmentStages.find(vid) == coinAssignmentStages.end()) {
             CoinAssignment* res = new CoinAssignment();
             populateWSM(res, vid);
             res->setVid(vid);
             res->setByteLength(COIN_ASSIGNMENT_BYTE_SIZE);
-            sendDelayedDown(res->dup(),
-                    cpuModel.getLatency(simTime().dbl(), COIN_ASSIGNMENT_LATENCY_MEAN, COIN_ASSIGNMENT_LATENCY_STDDEV));
+            CpuModel::Latency latencyInfo = cpuModel.getLatencyInfo(simTime().dbl(), COIN_ASSIGNMENT_LATENCY_MEAN, COIN_ASSIGNMENT_LATENCY_STDDEV);
+            sendDelayedDown(res->dup(), latencyInfo.all);
             coinAssignmentStages[vid] = CoinAssignmentStage::SENT;
-            EV << "[RSU] I sent a message of CoinAssignment to " << req->getVid() << endl;
+            EV << "[RSU] I sent a message of CoinAssignment to " << req->getVid()
+                    << ". Queue time " << latencyInfo.queue_time << " Computation time " << latencyInfo.computation_time << endl;
         }
     } else if (CoinDeposit* req = dynamic_cast<CoinDeposit*>(wsm)) {
         EV << "[RSU] I received a message of CoinDeposit from " << req->getVid() << endl;
@@ -60,10 +61,11 @@ void RSUApp::onWSM(BaseFrame1609_4* wsm) {
             populateWSM(res, vid);
             res->setVid(vid);
             res->setByteLength(COIN_DEPOSIT_SIGNATURE_REQUEST_BYTE_SIZE);
-            sendDelayedDown(res->dup(),
-                    cpuModel.getLatency(simTime().dbl(), COIN_DEPOSIT_SIGNATURE_REQUEST_LATENCY_MEAN, COIN_DEPOSIT_SIGNATURE_REQUEST_LATENCY_STDDEV));
+            CpuModel::Latency latencyInfo = cpuModel.getLatencyInfo(simTime().dbl(), COIN_DEPOSIT_SIGNATURE_REQUEST_LATENCY_MEAN, COIN_DEPOSIT_SIGNATURE_REQUEST_LATENCY_STDDEV);
+            sendDelayedDown(res->dup(), latencyInfo.all);
             coinDepositStages[vid] = CoinDepositStage::SIGNATURE_REQUESTED;
-            EV << "[RSU] I sent a message of CoinDepositSignatureRequest to " << req->getVid() << endl;
+            EV << "[RSU] I sent a message of CoinDepositSignatureRequest to " << req->getVid()
+                    << ". Queue time " << latencyInfo.queue_time << " Computation time " << latencyInfo.computation_time << endl;
         }
     } else if (CoinDepositSignatureResponse* req = dynamic_cast<CoinDepositSignatureResponse*>(wsm)) {
         EV << "[RSU] I received a message of CoinDepositSignatureResponse from " << req->getVid() << endl;
