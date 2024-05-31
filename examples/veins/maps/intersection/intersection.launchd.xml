@@ -33,8 +33,9 @@
 
 <!-- debug config -->
 <launch>
+	<basedir path="/home/veins/src/veins/examples/veins/maps/intersection" />
     <copy file="intersection.net.xml" />
-    <copy file="intersection.rou1000.xml" />
+    <copy file="intersection.rou.xml" />
     <copy file="intersection.sumo.cfg" type="config" />
 </launch>
 

@@ -21,4 +21,5 @@ simple RSUApp extends DemoBaseApplLayer
 {
 parameters:
     @class(veins::RSUApp);
+    int numCpuCores;
 }

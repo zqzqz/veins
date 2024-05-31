@@ -29,8 +29,9 @@ Define_Module(veins::RSUApp);
 
 void RSUApp::initialize(int stage) {
     DemoBaseApplLayer::initialize(stage);
-    cpuModel.init(3);
-    EV << "[RSU] address " << myId << endl;
+    int numCpuCores = par("numCpuCores");
+    cpuModel.init(numCpuCores);
+    EV << "[RSU]: Address " << myId << endl;
 }
 
 void RSUApp::handleSelfMsg(cMessage* msg) {
@@ -40,7 +41,7 @@ void RSUApp::handleSelfMsg(cMessage* msg) {
 void RSUApp::onWSM(BaseFrame1609_4* wsm) {
     DemoBaseApplLayer::onWSM(wsm);
     if (CoinRequest* req = dynamic_cast<CoinRequest*>(wsm)) {
-        EV << "[RSU] I received a message of CoinRequest from " << req->getVid() << endl;
+        EV << "[RSU]: I received a message of CoinRequest from " << req->getVid() << endl;
         int vid = req->getVid();
         if (coinAssignmentStages.find(vid) == coinAssignmentStages.end()) {
             CoinAssignment* res = new CoinAssignment();
@@ -54,7 +55,7 @@ void RSUApp::onWSM(BaseFrame1609_4* wsm) {
                     << ". Queue time " << latencyInfo.queue_time << " Computation time " << latencyInfo.computation_time << endl;
         }
     } else if (CoinDeposit* req = dynamic_cast<CoinDeposit*>(wsm)) {
-        EV << "[RSU] I received a message of CoinDeposit from " << req->getVid() << endl;
+        EV << "[RSU]: I received a message of CoinDeposit from " << req->getVid() << endl;
         int vid = req->getVid();
         if (coinDepositStages.find(vid) == coinDepositStages.end()) {
             CoinDepositSignatureRequest* res = new CoinDepositSignatureRequest();
@@ -68,7 +69,7 @@ void RSUApp::onWSM(BaseFrame1609_4* wsm) {
                     << ". Queue time " << latencyInfo.queue_time << " Computation time " << latencyInfo.computation_time << endl;
         }
     } else if (CoinDepositSignatureResponse* req = dynamic_cast<CoinDepositSignatureResponse*>(wsm)) {
-        EV << "[RSU] I received a message of CoinDepositSignatureResponse from " << req->getVid() << endl;
+        EV << "[RSU]: I received a message of CoinDepositSignatureResponse from " << req->getVid() << endl;
         int vid = req->getVid();
         if (coinDepositStages.find(vid) != coinDepositStages.end() && coinDepositStages[vid] == CoinDepositStage::SIGNATURE_REQUESTED) {
             // TODO: The communication to central database.

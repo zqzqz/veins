@@ -15,14 +15,10 @@
 
 package org.car2x.veins.modules.application.rcs;
 
-import org.car2x.veins.modules.application.ieee80211p.DemoBaseApplLayer;
+import org.car2x.veins.modules.application.rcs.CarApp;
 
-simple CarApp extends DemoBaseApplLayer
+simple CarAuctionApp extends CarApp
 {
 parameters:
-    @class(veins::CarApp);
-    double rsu_x;
-    double rsu_y;
-    int rsu_address;
-    int numCpuCores;
+    @class(veins::CarAuctionApp);
 }

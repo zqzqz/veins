@@ -13,16 +13,23 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // 
 
-package org.car2x.veins.modules.application.rcs;
+#ifndef RCS_APPS_RSUPERCEPTIONAPP_H_
+#define RCS_APPS_RSUPERCEPTIONAPP_H_
 
-import org.car2x.veins.modules.application.ieee80211p.DemoBaseApplLayer;
+#include "RSUApp.h"
 
-simple CarApp extends DemoBaseApplLayer
-{
-parameters:
-    @class(veins::CarApp);
-    double rsu_x;
-    double rsu_y;
-    int rsu_address;
-    int numCpuCores;
-}
+using namespace omnetpp;
+
+namespace veins {
+
+class RSUPerceptionApp : public RSUApp {
+public:
+    void initialize(int stage) override;
+protected:
+    void handleSelfMsg(cMessage* msg) override;
+    void onWSM(BaseFrame1609_4* wsm) override;
+};
+
+} // veins namespace
+
+#endif /* RCS_APPS_RSUPERCEPTIONAPP_H_ */

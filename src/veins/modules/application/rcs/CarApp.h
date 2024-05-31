@@ -31,6 +31,7 @@ protected:
     CoinAssignmentStage coinAssignmentStage;
     CoinDepositStage coinDepositStage;
     Coord rsuPosition;
+    Coord selfPosition;
     LAddress::L2Type rsuAddress;
     CpuModel cpuModel;
     double coinAssignmentLastTry;
