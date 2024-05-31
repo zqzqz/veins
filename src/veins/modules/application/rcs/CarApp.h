@@ -16,7 +16,7 @@
 #ifndef APPS_CARAPP_H_
 #define APPS_CARAPP_H_
 
-#include "veins/modules/application/ieee80211p/DemoBaseApplLayer.h"
+#include "BaseApp.h"
 #include "common.h"
 #include "CpuModel.h"
 
@@ -24,7 +24,7 @@ using namespace omnetpp;
 
 namespace veins {
 
-class CarApp : public DemoBaseApplLayer {
+class CarApp : public BaseApp {
 public:
     void initialize(int stage) override;
 protected:
@@ -33,7 +33,6 @@ protected:
     Coord rsuPosition;
     Coord selfPosition;
     LAddress::L2Type rsuAddress;
-    CpuModel cpuModel;
     double coinAssignmentLastTry;
     double coinDepositLastTry;
 protected:

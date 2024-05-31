@@ -15,11 +15,10 @@
 
 package org.car2x.veins.modules.application.rcs;
 
-import org.car2x.veins.modules.application.ieee80211p.DemoBaseApplLayer;
+import org.car2x.veins.modules.application.rcs.BaseApp;
 
-simple RSUApp extends DemoBaseApplLayer
+simple RSUApp extends BaseApp
 {
 parameters:
     @class(veins::RSUApp);
-    int numCpuCores;
 }

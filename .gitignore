@@ -1,4 +1,5 @@
 *.log
+/.csettings
 
 src/Makefile
 src/*.so

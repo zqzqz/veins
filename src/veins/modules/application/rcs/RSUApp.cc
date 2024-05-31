@@ -28,18 +28,18 @@ using namespace veins;
 Define_Module(veins::RSUApp);
 
 void RSUApp::initialize(int stage) {
-    DemoBaseApplLayer::initialize(stage);
+    BaseApp::initialize(stage);
     int numCpuCores = par("numCpuCores");
     cpuModel.init(numCpuCores);
     EV << "[RSU]: Address " << myId << endl;
 }
 
 void RSUApp::handleSelfMsg(cMessage* msg) {
-    DemoBaseApplLayer::handleSelfMsg(msg);
+    BaseApp::handleSelfMsg(msg);
 }
 
 void RSUApp::onWSM(BaseFrame1609_4* wsm) {
-    DemoBaseApplLayer::onWSM(wsm);
+    BaseApp::onWSM(wsm);
     if (CoinRequest* req = dynamic_cast<CoinRequest*>(wsm)) {
         EV << "[RSU]: I received a message of CoinRequest from " << req->getVid() << endl;
         int vid = req->getVid();

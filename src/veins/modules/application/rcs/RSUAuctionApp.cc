@@ -57,7 +57,7 @@ void RSUAuctionApp::onWSM(BaseFrame1609_4* wsm) {
         CpuModel::Latency latencyInfo = cpuModel.getLatencyInfo(simTime().dbl(), COIN_ASSIGNMENT_LATENCY_MEAN, COIN_ASSIGNMENT_LATENCY_STDDEV);
         sendDelayedDown(res->dup(), latencyInfo.all);
         coinAssignmentStages[vid] = CoinAssignmentStage::SENT;
-        EV_WARN << "[RSU] I sent a message of CoinAssignment to " << req->getVid()
+        EV_WARN << "[RSU]: I sent a message of CoinAssignment to " << req->getVid()
                 << ". Queue time " << latencyInfo.queue_time << " Computation time " << latencyInfo.computation_time << endl;
     } else if (CoinDeposit* req = dynamic_cast<CoinDeposit*>(wsm)) {
         EV_WARN << "[RSU]: I received a message of CoinDeposit from " << req->getVid() << endl;

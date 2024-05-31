@@ -16,7 +16,7 @@
 #ifndef RCS_APPS_RSUAPP_H_
 #define RCS_APPS_RSUAPP_H_
 
-#include "veins/modules/application/ieee80211p/DemoBaseApplLayer.h"
+#include "BaseApp.h"
 #include "common.h"
 #include "CpuModel.h"
 #include <map>
@@ -25,11 +25,10 @@ using namespace omnetpp;
 
 namespace veins {
 
-class RSUApp : public DemoBaseApplLayer {
+class RSUApp : public BaseApp {
 public:
     void initialize(int stage) override;
 protected:
-    CpuModel cpuModel;
     std::map<int, CoinAssignmentStage> coinAssignmentStages;
     std::map<int, CoinDepositStage> coinDepositStages;
 protected:

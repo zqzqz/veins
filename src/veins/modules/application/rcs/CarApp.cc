@@ -28,7 +28,7 @@ using namespace veins;
 Define_Module(veins::CarApp);
 
 void CarApp::initialize(int stage) {
-    DemoBaseApplLayer::initialize(stage);
+    BaseApp::initialize(stage);
     int numCpuCores = par("numCpuCores");
     cpuModel.init(numCpuCores);
     coinAssignmentStage = CoinAssignmentStage::INIT;
@@ -38,11 +38,11 @@ void CarApp::initialize(int stage) {
 }
 
 void CarApp::handleSelfMsg(cMessage* msg) {
-    DemoBaseApplLayer::handleSelfMsg(msg);
+    BaseApp::handleSelfMsg(msg);
 }
 
 void CarApp::handlePositionUpdate(cObject* obj) {
-    DemoBaseApplLayer::handlePositionUpdate(obj);
+    BaseApp::handlePositionUpdate(obj);
     ChannelMobilityPtrType const mobility = check_and_cast<ChannelMobilityPtrType>(obj);
     curPosition = mobility->getPositionAt(simTime());
     double distanceToRSU = sqrt(pow(curPosition.x - rsuPosition.x, 2) + pow(curPosition.y - rsuPosition.y, 2));
@@ -98,7 +98,7 @@ void CarApp::handlePositionUpdate(cObject* obj) {
 }
 
 void CarApp::onWSM(BaseFrame1609_4* wsm) {
-    DemoBaseApplLayer::onWSM(wsm);
+    BaseApp::onWSM(wsm);
     if (CoinAssignment* req = dynamic_cast<CoinAssignment*>(wsm)) {
         EV << "[Vehicle " << myId << "]: I received a message of CoinAssignment" << endl;
         coinAssignmentStage = CoinAssignmentStage::FINISHED;
