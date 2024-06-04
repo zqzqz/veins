@@ -22,7 +22,6 @@ simple BaseApp extends DemoBaseApplLayer
 parameters:
     @class(veins::BaseApp);
     int numCpuCores;
-    int HEADER_BYTE_SIZE;
     int COIN_REQUEST_BYTE_SIZE;
     int COIN_ASSIGNMENT_BYTE_SIZE;
     int COIN_DEPOSIT_BYTE_SIZE;
