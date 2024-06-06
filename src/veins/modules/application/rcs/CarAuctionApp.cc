@@ -54,7 +54,7 @@ void CarAuctionApp::handlePositionUpdate(cObject* obj) {
     }
 
     // When leaving the intersection, trigger coin assignment.
-    if (distanceToRSU > 10 && distanceToRSU > lastDistanceToRSU) {
+    if (distanceToRSU > 5 && distanceToRSU > lastDistanceToRSU) {
         if (coinAssignmentStage == CoinAssignmentStage::INIT) {
             coinAssignmentLastTry = simTime().dbl();
             CoinRequest* msg = new CoinRequest();
@@ -64,6 +64,7 @@ void CarAuctionApp::handlePositionUpdate(cObject* obj) {
             CpuModel::Latency latencyInfo = cpuModel.getLatencyInfo(simTime().dbl(), COIN_REQUEST_LATENCY_MEAN, COIN_REQUEST_LATENCY_STDDEV);
             sendDelayedDown(msg->dup(), latencyInfo.all);
             coinAssignmentStage = CoinAssignmentStage::REQUESTED;
+            EV_WARN << "[Vehicle " << myId << "]: distance to RSU " << distanceToRSU << endl;
             EV_WARN << "[Vehicle " << myId << "]: I sent a message of CoinRequest"
                     << ". Queue time " << latencyInfo.queue_time << " Computation time " << latencyInfo.computation_time << endl;
         }
@@ -85,7 +86,7 @@ void CarAuctionApp::handlePositionUpdate(cObject* obj) {
         }
     }
 
-    if (distanceToRSU > 150) {
+    if (distanceToRSU > 150 && distanceToRSU > lastDistanceToRSU) {
         if (coinAssignmentStage != CoinAssignmentStage::INIT && coinAssignmentStage != CoinAssignmentStage::FINISHED && coinAssignmentStage != CoinAssignmentStage::FAILED) {
             coinAssignmentStage = CoinAssignmentStage::FAILED;
             EV_WARN << "[Vehicle " << myId << "]: Coin assignment failed." << endl;

@@ -3,7 +3,7 @@
 	<name>veins_inet3</name>
 	<comment></comment>
 	<projects>
-		<project>inet</project>
+		<project>inet-3.6.6</project>
 		<project>veins</project>
 	</projects>
 	<buildSpec>

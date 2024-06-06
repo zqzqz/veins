@@ -40,7 +40,6 @@ void CarPerceptionApp::handlePositionUpdate(cObject* obj) {
     ChannelMobilityPtrType const mobility = check_and_cast<ChannelMobilityPtrType>(obj);
     curPosition = mobility->getPositionAt(simTime());
     double distanceToRSU = sqrt(pow(curPosition.x - rsuPosition.x, 2) + pow(curPosition.y - rsuPosition.y, 2));
-    EV_WARN << "[Vehicle " << myId << "] distanceToRSU " << distanceToRSU << endl;
 
     if (coinAssignmentStage != CoinAssignmentStage::INIT && coinAssignmentStage != CoinAssignmentStage::FINISHED && coinAssignmentStage != CoinAssignmentStage::FAILED) {
         if (simTime().dbl() > coinAssignmentLastTry + 5) {
