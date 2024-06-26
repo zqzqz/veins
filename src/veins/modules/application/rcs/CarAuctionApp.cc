@@ -54,7 +54,7 @@ void CarAuctionApp::handlePositionUpdate(cObject* obj) {
     }
 
     // When leaving the intersection, trigger coin assignment.
-    if (distanceToRSU > 5 && distanceToRSU > lastDistanceToRSU) {
+    if (distanceToRSU > lastDistanceToRSU) {
         if (coinAssignmentStage == CoinAssignmentStage::INIT) {
             coinAssignmentLastTry = simTime().dbl();
             CoinRequest* msg = new CoinRequest();
@@ -71,7 +71,7 @@ void CarAuctionApp::handlePositionUpdate(cObject* obj) {
     }
 
     // When approaching the intersection, trigger coin deposit.
-    if (distanceToRSU < 150 && distanceToRSU < lastDistanceToRSU) {
+    if (distanceToRSU < 300 && distanceToRSU < lastDistanceToRSU) {
         if (coinDepositStage == CoinDepositStage::INIT) {
             coinDepositLastTry = simTime().dbl();
             CoinDeposit* msg = new CoinDeposit();
@@ -86,7 +86,7 @@ void CarAuctionApp::handlePositionUpdate(cObject* obj) {
         }
     }
 
-    if (distanceToRSU > 150 && distanceToRSU > lastDistanceToRSU) {
+    if (distanceToRSU > 300 && distanceToRSU > lastDistanceToRSU) {
         if (coinAssignmentStage != CoinAssignmentStage::INIT && coinAssignmentStage != CoinAssignmentStage::FINISHED && coinAssignmentStage != CoinAssignmentStage::FAILED) {
             coinAssignmentStage = CoinAssignmentStage::FAILED;
             EV_WARN << "[Vehicle " << myId << "]: Coin assignment failed." << endl;
