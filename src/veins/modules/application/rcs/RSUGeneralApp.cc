@@ -47,7 +47,6 @@ void RSUGeneralApp::onWSM(BaseFrame1609_4* wsm) {
         populateWSM(res, vid);
         res->setVid(vid);
         res->setByteLength(COIN_ASSIGNMENT_BYTE_SIZE);
-
         CpuModel::Latency latencyInfo = cpuModel.getLatencyInfo(simTime().dbl(), COIN_ASSIGNMENT_LATENCY_MEAN, COIN_ASSIGNMENT_LATENCY_STDDEV);
         sendDelayedDown(res->dup(), latencyInfo.all);
         coinAssignmentStages[vid] = CoinAssignmentStage::SENT;

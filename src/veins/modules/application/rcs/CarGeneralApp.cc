@@ -54,7 +54,7 @@ void CarGeneralApp::handlePositionUpdate(cObject* obj) {
     }
 
     // When leaving the intersection, trigger coin assignment.
-    if (distanceToRSU > 5 && distanceToRSU > lastDistanceToRSU) {
+    if (distanceToRSU < 150 && distanceToRSU > lastDistanceToRSU) {
         if (coinAssignmentStage == CoinAssignmentStage::INIT) {
             coinAssignmentLastTry = simTime().dbl();
             CoinRequest* msg = new CoinRequest();
