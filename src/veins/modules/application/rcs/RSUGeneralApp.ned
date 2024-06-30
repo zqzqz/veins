@@ -13,26 +13,12 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // 
 
-#ifndef APPS_CARPERCEPTIONAPP_H_
-#define APPS_CARPERCEPTIONAPP_H_
+package org.car2x.veins.modules.application.rcs;
 
-#include "CarApp.h"
+import org.car2x.veins.modules.application.rcs.RSUApp;
 
-using namespace omnetpp;
-
-namespace veins {
-
-class CarPerceptionApp : public CarApp {
-public:
-    void initialize(int stage) override;
-protected:
-    double lastDistanceToRSU;
-protected:
-    void handleSelfMsg(cMessage* msg) override;
-    void handlePositionUpdate(cObject* obj) override;
-    void onWSM(BaseFrame1609_4* wsm) override;
-};
-
-} // veins namespace
-
-#endif /* APPS_CARPERCEPTIONAPP_H_ */
+simple RSUGeneralApp extends RSUApp
+{
+parameters:
+    @class(veins::RSUGeneralApp);
+}

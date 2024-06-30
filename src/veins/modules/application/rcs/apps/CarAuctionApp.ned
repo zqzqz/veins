@@ -13,26 +13,12 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // 
 
-#ifndef APPS_CARAUCTIONAPP_H_
-#define APPS_CARAUCTIONAPP_H_
+package org.car2x.veins.modules.application.rcs.apps;
 
-#include "CarApp.h"
+import org.car2x.veins.modules.application.rcs.CarApp;
 
-using namespace omnetpp;
-
-namespace veins {
-
-class CarAuctionApp : public CarApp {
-public:
-    void initialize(int stage) override;
-protected:
-    double lastDistanceToRSU;
-protected:
-    void handleSelfMsg(cMessage* msg) override;
-    void handlePositionUpdate(cObject* obj) override;
-    void onWSM(BaseFrame1609_4* wsm) override;
-};
-
-} // veins namespace
-
-#endif /* APPS_CARAUCTIONAPP_H_ */
+simple CarAuctionApp extends CarApp
+{
+parameters:
+    @class(veins::CarAuctionApp);
+}

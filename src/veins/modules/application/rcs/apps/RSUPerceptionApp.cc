@@ -14,7 +14,7 @@
 // 
 
 #include "RSUPerceptionApp.h"
-#include "common.h"
+#include "../common.h"
 #include "veins/modules/messages/CoinRequest_m.h"
 #include "veins/modules/messages/CoinAssignment_m.h"
 #include "veins/modules/messages/CoinDeposit_m.h"

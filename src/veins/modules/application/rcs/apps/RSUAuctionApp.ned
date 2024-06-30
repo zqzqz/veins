@@ -13,12 +13,12 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // 
 
-package org.car2x.veins.modules.application.rcs;
+package org.car2x.veins.modules.application.rcs.apps;
 
-import org.car2x.veins.modules.application.rcs.CarApp;
+import org.car2x.veins.modules.application.rcs.RSUApp;
 
-simple CarAuctionApp extends CarApp
+simple RSUAuctionApp extends RSUApp
 {
 parameters:
-    @class(veins::CarAuctionApp);
+    @class(veins::RSUAuctionApp);
 }

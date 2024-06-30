@@ -13,7 +13,7 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // 
 
-#include "CarAuctionApp.h"
+#include "CarGeneralApp.h"
 #include "common.h"
 #include "veins/modules/messages/CoinRequest_m.h"
 #include "veins/modules/messages/CoinAssignment_m.h"
@@ -25,18 +25,18 @@
 
 using namespace veins;
 
-Define_Module(veins::CarAuctionApp);
+Define_Module(veins::CarGeneralApp);
 
-void CarAuctionApp::initialize(int stage) {
+void CarGeneralApp::initialize(int stage) {
     CarApp::initialize(stage);
     lastDistanceToRSU = 10000;
 }
 
-void CarAuctionApp::handleSelfMsg(cMessage* msg) {
+void CarGeneralApp::handleSelfMsg(cMessage* msg) {
 
 }
 
-void CarAuctionApp::handlePositionUpdate(cObject* obj) {
+void CarGeneralApp::handlePositionUpdate(cObject* obj) {
     ChannelMobilityPtrType const mobility = check_and_cast<ChannelMobilityPtrType>(obj);
     curPosition = mobility->getPositionAt(simTime());
     double distanceToRSU = sqrt(pow(curPosition.x - rsuPosition.x, 2) + pow(curPosition.y - rsuPosition.y, 2));
@@ -100,7 +100,7 @@ void CarAuctionApp::handlePositionUpdate(cObject* obj) {
     lastDistanceToRSU = distanceToRSU;
 }
 
-void CarAuctionApp::onWSM(BaseFrame1609_4* wsm) {
+void CarGeneralApp::onWSM(BaseFrame1609_4* wsm) {
     if (CoinAssignment* req = dynamic_cast<CoinAssignment*>(wsm)) {
         EV_WARN << "[Vehicle " << myId << "]: I received a message of CoinAssignment" << endl;
         coinAssignmentStage = CoinAssignmentStage::FINISHED;
