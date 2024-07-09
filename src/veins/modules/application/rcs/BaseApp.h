@@ -47,10 +47,6 @@ protected:
     double COIN_DEPOSIT_SIGNATURE_RESPONSE_LATENCY_STDDEV;
     double COIN_SUBMISSION_LATENCY_MEAN;
     double COIN_SUBMISSION_LATENCY_STDDEV;
-protected:
-    void handleSelfMsg(cMessage* msg) override;
-    void handlePositionUpdate(cObject* obj) override;
-    void onWSM(BaseFrame1609_4* wsm) override;
 };
 
 } // veins namespace

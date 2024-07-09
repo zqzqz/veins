@@ -35,8 +35,8 @@ protected:
     LAddress::L2Type rsuAddress;
     double coinAssignmentLastTry;
     double coinDepositLastTry;
-protected:
-    void handleSelfMsg(cMessage* msg) override;
+    double lastDistanceToRSU;
+
     void handlePositionUpdate(cObject* obj) override;
     void onWSM(BaseFrame1609_4* wsm) override;
 };

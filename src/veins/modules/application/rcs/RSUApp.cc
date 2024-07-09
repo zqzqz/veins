@@ -34,46 +34,41 @@ void RSUApp::initialize(int stage) {
     EV << "[RSU]: Address " << myId << endl;
 }
 
-void RSUApp::handleSelfMsg(cMessage* msg) {
-    BaseApp::handleSelfMsg(msg);
-}
-
 void RSUApp::onWSM(BaseFrame1609_4* wsm) {
-    BaseApp::onWSM(wsm);
     if (CoinRequest* req = dynamic_cast<CoinRequest*>(wsm)) {
-        EV << "[RSU]: I received a message of CoinRequest from " << req->getVid() << endl;
+        EV_WARN << "[RSU]: I received a message of CoinRequest from " << req->getVid() << endl;
         int vid = req->getVid();
-        if (coinAssignmentStages.find(vid) == coinAssignmentStages.end()) {
-            CoinAssignment* res = new CoinAssignment();
-            populateWSM(res, vid);
-            res->setVid(vid);
-            res->setByteLength(COIN_ASSIGNMENT_BYTE_SIZE);
-            CpuModel::Latency latencyInfo = cpuModel.getLatencyInfo(simTime().dbl(), COIN_ASSIGNMENT_LATENCY_MEAN, COIN_ASSIGNMENT_LATENCY_STDDEV);
-            sendDelayedDown(res->dup(), latencyInfo.all);
-            coinAssignmentStages[vid] = CoinAssignmentStage::SENT;
-            EV << "[RSU] I sent a message of CoinAssignment to " << req->getVid()
-                    << ". Queue time " << latencyInfo.queue_time << " Computation time " << latencyInfo.computation_time << endl;
-        }
-    } else if (CoinDeposit* req = dynamic_cast<CoinDeposit*>(wsm)) {
-        EV << "[RSU]: I received a message of CoinDeposit from " << req->getVid() << endl;
+
+        CoinAssignment* res = new CoinAssignment();
+        populateWSM(res, vid);
+        res->setVid(vid);
+        res->setByteLength(COIN_ASSIGNMENT_BYTE_SIZE);
+        CpuModel::Latency latencyInfo = cpuModel.getLatencyInfo(simTime().dbl(), COIN_ASSIGNMENT_LATENCY_MEAN, COIN_ASSIGNMENT_LATENCY_STDDEV);
+        sendDelayedDown(res->dup(), latencyInfo.all);
+        coinAssignmentStages[vid] = CoinAssignmentStage::SENT;
+        EV_WARN << "[RSU]: I sent a message of CoinAssignment to " << req->getVid()
+                << ". Queue time " << latencyInfo.queue_time << " Computation time " << latencyInfo.computation_time << endl;
+    }
+    else if (CoinDeposit* req = dynamic_cast<CoinDeposit*>(wsm)) {
+        EV_WARN << "[RSU]: I received a message of CoinDeposit from " << req->getVid() << endl;
         int vid = req->getVid();
-        if (coinDepositStages.find(vid) == coinDepositStages.end()) {
-            CoinDepositSignatureRequest* res = new CoinDepositSignatureRequest();
-            populateWSM(res, vid);
-            res->setVid(vid);
-            res->setByteLength(COIN_DEPOSIT_SIGNATURE_REQUEST_BYTE_SIZE);
-            CpuModel::Latency latencyInfo = cpuModel.getLatencyInfo(simTime().dbl(), COIN_DEPOSIT_SIGNATURE_REQUEST_LATENCY_MEAN, COIN_DEPOSIT_SIGNATURE_REQUEST_LATENCY_STDDEV);
-            sendDelayedDown(res->dup(), latencyInfo.all);
-            coinDepositStages[vid] = CoinDepositStage::SIGNATURE_REQUESTED;
-            EV << "[RSU] I sent a message of CoinDepositSignatureRequest to " << req->getVid()
-                    << ". Queue time " << latencyInfo.queue_time << " Computation time " << latencyInfo.computation_time << endl;
-        }
-    } else if (CoinDepositSignatureResponse* req = dynamic_cast<CoinDepositSignatureResponse*>(wsm)) {
-        EV << "[RSU]: I received a message of CoinDepositSignatureResponse from " << req->getVid() << endl;
+        CoinDepositSignatureRequest* res = new CoinDepositSignatureRequest();
+        populateWSM(res, vid);
+        res->setVid(vid);
+        res->setByteLength(COIN_DEPOSIT_SIGNATURE_REQUEST_BYTE_SIZE);
+        CpuModel::Latency latencyInfo = cpuModel.getLatencyInfo(simTime().dbl(), COIN_DEPOSIT_SIGNATURE_REQUEST_LATENCY_MEAN, COIN_DEPOSIT_SIGNATURE_REQUEST_LATENCY_STDDEV);
+        sendDelayedDown(res->dup(), latencyInfo.all);
+        coinDepositStages[vid] = CoinDepositStage::SIGNATURE_REQUESTED;
+        EV_WARN << "[RSU] I sent a message of CoinDepositSignatureRequest to " << req->getVid()
+                << ". Queue time " << latencyInfo.queue_time << " Computation time " << latencyInfo.computation_time << endl;
+    }
+    else if (CoinDepositSignatureResponse* req = dynamic_cast<CoinDepositSignatureResponse*>(wsm)) {
+        EV_WARN << "[RSU]: I received a message of CoinDepositSignatureResponse from " << req->getVid() << endl;
         int vid = req->getVid();
         if (coinDepositStages.find(vid) != coinDepositStages.end() && coinDepositStages[vid] == CoinDepositStage::SIGNATURE_REQUESTED) {
             // TODO: The communication to central database.
             coinDepositStages[vid] = CoinDepositStage::SUBMITTED;
+            EV_WARN << "[Vehicle " << vid << "]: Coin deposit succeed." << endl;
         }
     }
 }

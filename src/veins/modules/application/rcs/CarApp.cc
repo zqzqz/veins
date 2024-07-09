@@ -35,14 +35,10 @@ void CarApp::initialize(int stage) {
     coinDepositStage = CoinDepositStage::INIT;
     rsuPosition = Coord(par("rsu_x"), par("rsu_y"));
     rsuAddress = par("rsu_address").intValue();
-}
-
-void CarApp::handleSelfMsg(cMessage* msg) {
-    BaseApp::handleSelfMsg(msg);
+    lastDistanceToRSU = 10000;
 }
 
 void CarApp::handlePositionUpdate(cObject* obj) {
-    BaseApp::handlePositionUpdate(obj);
     ChannelMobilityPtrType const mobility = check_and_cast<ChannelMobilityPtrType>(obj);
     curPosition = mobility->getPositionAt(simTime());
     double distanceToRSU = sqrt(pow(curPosition.x - rsuPosition.x, 2) + pow(curPosition.y - rsuPosition.y, 2));
@@ -50,16 +46,17 @@ void CarApp::handlePositionUpdate(cObject* obj) {
 
     if (coinAssignmentStage != CoinAssignmentStage::INIT && coinAssignmentStage != CoinAssignmentStage::FINISHED && coinAssignmentStage != CoinAssignmentStage::FAILED) {
         if (simTime().dbl() > coinAssignmentLastTry + 5) {
-            coinAssignmentStage= CoinAssignmentStage::INIT;
+            coinAssignmentStage = CoinAssignmentStage::INIT;
         }
     }
     if (coinDepositStage != CoinDepositStage::INIT && coinDepositStage != CoinDepositStage::SIGNATURE_SENT && coinDepositStage != CoinDepositStage::FAILED) {
         if (simTime().dbl() > coinDepositLastTry + 5) {
-            coinDepositStage= CoinDepositStage::INIT;
+            coinDepositStage = CoinDepositStage::INIT;
         }
     }
 
-    if (distanceToRSU < 150) {
+    // When leaving the intersection, trigger coin assignment.
+    if (distanceToRSU > lastDistanceToRSU) {
         if (coinAssignmentStage == CoinAssignmentStage::INIT) {
             coinAssignmentLastTry = simTime().dbl();
             CoinRequest* msg = new CoinRequest();
@@ -69,9 +66,14 @@ void CarApp::handlePositionUpdate(cObject* obj) {
             CpuModel::Latency latencyInfo = cpuModel.getLatencyInfo(simTime().dbl(), COIN_REQUEST_LATENCY_MEAN, COIN_REQUEST_LATENCY_STDDEV);
             sendDelayedDown(msg->dup(), latencyInfo.all);
             coinAssignmentStage = CoinAssignmentStage::REQUESTED;
-            EV << "[Vehicle " << myId << "]: I sent a message of CoinRequest"
+            EV_WARN << "[Vehicle " << myId << "]: distance to RSU " << distanceToRSU << endl;
+            EV_WARN << "[Vehicle " << myId << "]: I sent a message of CoinRequest"
                     << ". Queue time " << latencyInfo.queue_time << " Computation time " << latencyInfo.computation_time << endl;
         }
+    }
+
+    // When approaching the intersection, trigger coin deposit.
+    if (distanceToRSU < 300 && distanceToRSU < lastDistanceToRSU) {
         if (coinDepositStage == CoinDepositStage::INIT) {
             coinDepositLastTry = simTime().dbl();
             CoinDeposit* msg = new CoinDeposit();
@@ -81,29 +83,32 @@ void CarApp::handlePositionUpdate(cObject* obj) {
             CpuModel::Latency latencyInfo = cpuModel.getLatencyInfo(simTime().dbl(), COIN_DEPOSIT_LATENCY_MEAN, COIN_DEPOSIT_LATENCY_STDDEV);
             sendDelayedDown(msg->dup(), latencyInfo.all);
             coinDepositStage = CoinDepositStage::REQUESTED;
-            EV << "[Vehicle " << myId << "]: I sent a message of CoinDeposit"
+            EV_WARN << "[Vehicle " << myId << "]: I sent a message of CoinDeposit"
                     << ". Queue time " << latencyInfo.queue_time << " Computation time " << latencyInfo.computation_time << endl;
         }
     }
-    if (distanceToRSU > 150) {
+
+    if (distanceToRSU > 300 && distanceToRSU > lastDistanceToRSU) {
         if (coinAssignmentStage != CoinAssignmentStage::INIT && coinAssignmentStage != CoinAssignmentStage::FINISHED && coinAssignmentStage != CoinAssignmentStage::FAILED) {
             coinAssignmentStage = CoinAssignmentStage::FAILED;
-            EV << "[Vehicle " << myId << "]: Coin assignment failed." << endl;
+            EV_WARN << "[Vehicle " << myId << "]: Coin assignment failed." << endl;
         }
         if (coinDepositStage != CoinDepositStage::INIT && coinDepositStage != CoinDepositStage::SIGNATURE_SENT && coinDepositStage != CoinDepositStage::FAILED) {
             coinDepositStage = CoinDepositStage::FAILED;
-            EV << "[Vehicle " << myId << "]: Coin deposit failed." << endl;
+            EV_WARN << "[Vehicle " << myId << "]: Coin deposit failed." << endl;
         }
     }
+
+    lastDistanceToRSU = distanceToRSU;
 }
 
 void CarApp::onWSM(BaseFrame1609_4* wsm) {
-    BaseApp::onWSM(wsm);
     if (CoinAssignment* req = dynamic_cast<CoinAssignment*>(wsm)) {
-        EV << "[Vehicle " << myId << "]: I received a message of CoinAssignment" << endl;
+        EV_WARN << "[Vehicle " << myId << "]: I received a message of CoinAssignment" << endl;
         coinAssignmentStage = CoinAssignmentStage::FINISHED;
+        EV_WARN << "[Vehicle " << myId << "]: Coin assignment succeed." << endl;
     } else if (CoinDepositSignatureRequest* req = dynamic_cast<CoinDepositSignatureRequest*>(wsm)) {
-        EV << "[Vehicle " << myId << "]: I received a message of CoinDepositSignatureRequest" << endl;
+        EV_WARN << "[Vehicle " << myId << "]: I received a message of CoinDepositSignatureRequest" << endl;
         CoinDepositSignatureResponse* msg = new CoinDepositSignatureResponse();
         populateWSM(msg, rsuAddress);
         msg->setVid(myId);
@@ -111,7 +116,7 @@ void CarApp::onWSM(BaseFrame1609_4* wsm) {
         CpuModel::Latency latencyInfo = cpuModel.getLatencyInfo(simTime().dbl(), COIN_DEPOSIT_SIGNATURE_RESPONSE_LATENCY_MEAN, COIN_DEPOSIT_SIGNATURE_RESPONSE_LATENCY_STDDEV);
         sendDelayedDown(msg->dup(), latencyInfo.all);
         coinDepositStage = CoinDepositStage::SIGNATURE_SENT;
-        EV << "[Vehicle " << myId << "]: I sent a message of CoinDepositSignatureResponse"
+        EV_WARN << "[Vehicle " << myId << "]: I sent a message of CoinDepositSignatureResponse"
                 << ". Queue time " << latencyInfo.queue_time << " Computation time " << latencyInfo.computation_time << endl;
     }
 }

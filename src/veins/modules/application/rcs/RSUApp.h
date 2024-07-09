@@ -31,11 +31,9 @@ public:
 protected:
     std::map<int, CoinAssignmentStage> coinAssignmentStages;
     std::map<int, CoinDepositStage> coinDepositStages;
-protected:
-    void handleSelfMsg(cMessage* msg) override;
+
     void onWSM(BaseFrame1609_4* wsm) override;
 };
-
 } // veins namespace
 
 #endif /* RCS_APPS_RSUAPP_H_ */

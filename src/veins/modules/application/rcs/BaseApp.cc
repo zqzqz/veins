@@ -43,15 +43,3 @@ void BaseApp::initialize(int stage) {
     COIN_SUBMISSION_LATENCY_MEAN = par("COIN_SUBMISSION_LATENCY_MEAN");
     COIN_SUBMISSION_LATENCY_STDDEV = par("COIN_SUBMISSION_LATENCY_STDDEV");
 }
-
-void BaseApp::handleSelfMsg(cMessage* msg) {
-
-}
-
-void BaseApp::handlePositionUpdate(cObject* obj) {
-
-}
-
-void BaseApp::onWSM(BaseFrame1609_4* wsm) {
-
-}
