@@ -13,9 +13,9 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // 
 
-package org.car2x.veins.modules.application.rcs;
+package org.car2x.veins.modules.application.streetcred;
 
-import org.car2x.veins.modules.application.rcs.BaseApp;
+import org.car2x.veins.modules.application.streetcred.BaseApp;
 
 simple RSUApp extends BaseApp
 {
