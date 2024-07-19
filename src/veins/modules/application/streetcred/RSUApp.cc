@@ -15,12 +15,12 @@
 
 #include "RSUApp.h"
 #include "common.h"
-#include "veins/modules/messages/CoinRequest_m.h"
-#include "veins/modules/messages/CoinAssignment_m.h"
-#include "veins/modules/messages/CoinDeposit_m.h"
-#include "veins/modules/messages/CoinDepositSignatureRequest_m.h"
-#include "veins/modules/messages/CoinDepositSignatureResponse_m.h"
-#include "veins/modules/messages/CoinSubmission_m.h"
+#include "veins/modules/application/streetcred/messages/CoinRequest_m.h"
+#include "veins/modules/application/streetcred/messages/CoinAssignment_m.h"
+#include "veins/modules/application/streetcred/messages/CoinDeposit_m.h"
+#include "veins/modules/application/streetcred/messages/CoinDepositSignatureRequest_m.h"
+#include "veins/modules/application/streetcred/messages/CoinDepositSignatureResponse_m.h"
+#include "veins/modules/application/streetcred/messages/CoinSubmission_m.h"
 #include "veins/modules/application/ieee80211p/DemoBaseApplLayer.h"
 
 using namespace veins;
